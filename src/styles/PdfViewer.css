@@ -1,0 +1,39 @@
+.pdf-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .annotations {
+    margin-top: 20px;
+    width: 80%;
+    text-align: left;
+  }
+  
+  .annotations h3 {
+    margin-bottom: 10px;
+  }
+  
+  .annotations ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .annotations li {
+    background: #f9f9f9;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-left: 4px solid red;
+    cursor: pointer;
+  }
+  
+  .annotations li:hover {
+    background: #ffeeba;
+  }
+  
+  span[data-page-number] {
+    background-color: yellow;
+    cursor: pointer;
+  }
+  
