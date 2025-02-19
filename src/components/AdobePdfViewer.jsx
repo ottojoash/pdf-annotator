@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const AdobePdfViewer = ({ pdfUrl }) => {
   const viewerRef = useRef(null);
-  const adobeClientId = "4c715e248e384a749dddf60f7e7a7912"; 
+  const adobeClientId = "0471542c40044f50a039da8a623c99d2"; 
 
   useEffect(() => {
     if (!pdfUrl) return;
