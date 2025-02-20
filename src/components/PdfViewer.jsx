@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import  { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 // import { v4 as uuidv4 } from "uuid";
 import workerSrc from "pdfjs-dist/build/pdf.worker?url"; // ✅ Import the correct worker
@@ -9,68 +9,43 @@ import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 // ✅ Set correct worker source
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
-// import React, { useState } from "react";
-// import { Document, Page, pdfjs } from "react-pdf";
-
-
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const PDFViewer = ({ file }) => {
-  const [numPages, setNumPages] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [selectedText, setSelectedText] = useState("");
-  const [commentInput, setCommentInput] = useState("");
-
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
-
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection.toString()) {
-      setSelectedText(selection.toString());
-    }
-  };
-
-  const handleAddComment = () => {
-    if (selectedText && commentInput) {
-      setComments([...comments, { text: selectedText, comment: commentInput }]);
-      setSelectedText("");
-      setCommentInput("");
-    }
-  };
-
-  return (
-    <div>
-      <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
-        {Array.from(new Array(numPages), (el, index) => (
-          <Page key={`page_${index + 1}`} pageNumber={index + 1} onMouseUp={handleTextSelection} />
-        ))}
-      </Document>
-      {selectedText && (
-        <div>
-          <h4>Selected Text:</h4>
-          <p>{selectedText}</p>
-          <input
-            type="text"
-            value={commentInput}
-            onChange={(e) => setCommentInput(e.target.value)}
-            placeholder="Add a comment"
-          />
-          <button onClick={handleAddComment}>Save Comment</button>
+    const [numPages, setNumPages] = useState(null);
+    const [comments, setComments] = useState(() => {
+      return localStorage.getItem("pdfComments") || "";
+    });
+  
+    useEffect(() => {
+      localStorage.setItem("pdfComments", comments);
+    }, [comments]);
+  
+    const onDocumentLoadSuccess = ({ numPages }) => {
+      setNumPages(numPages);
+    };
+  
+    return (
+      <div style={{ display: "flex", flexDirection: "row", height: "100vh" }}>
+        <div style={{ flex: 3, overflow: "auto" }}>
+          <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            ))}
+          </Document>
         </div>
-      )}
-      <div>
-        <h3>Comments</h3>
-        {comments.map((c, index) => (
-          <div key={index}>
-            <strong>{c.text}:</strong> {c.comment}
-          </div>
-        ))}
+        <div style={{ flex: 1, padding: "10px", borderLeft: "1px solid #ccc", background: "#f8f8f8" }}>
+          <h3>Comments</h3>
+          <textarea
+            style={{ width: "100%", height: "90%", padding: "10px" }}
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            placeholder="Write your suggestions here..."
+          />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  
 PDFViewer.propTypes = {
   file: PropTypes.string.isRequired,
 };
