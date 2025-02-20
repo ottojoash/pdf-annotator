@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import  { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 // import { v4 as uuidv4 } from "uuid";
 import workerSrc from "pdfjs-dist/build/pdf.worker?url"; // ✅ Import the correct worker
@@ -27,6 +27,7 @@ const PDFViewer = ({ file }) => {
     });
     const [selectedText, setSelectedText] = useState("");
     const [commentInput, setCommentInput] = useState("");
+    const [highlightedTexts, setHighlightedTexts] = useState(new Set());
   
     useEffect(() => {
       localStorage.setItem("pdfComments", JSON.stringify(comments));
@@ -46,6 +47,7 @@ const PDFViewer = ({ file }) => {
     const handleAddComment = () => {
       if (selectedText && commentInput) {
         setComments([...comments, { text: selectedText, comment: commentInput }]);
+        setHighlightedTexts(new Set([...highlightedTexts, selectedText]));
         setSelectedText("");
         setCommentInput("");
       }
@@ -60,9 +62,9 @@ const PDFViewer = ({ file }) => {
             ))}
           </Document>
         </div>
-        <div style={{ flex: 1, padding: "10px", borderLeft: "1px solid #ccc", background: "#f8f8f8" }}>
+        <div style={{ flex: 1, padding: "10px", borderLeft: "1px solid #ccc", background: "black" }}>
           <h3>Comments</h3>
-          {selectedText && (
+          {selectedText && !highlightedTexts.has(selectedText) && (
             <div>
               <h4>Selected Text:</h4>
               <p>{selectedText}</p>
@@ -86,6 +88,7 @@ const PDFViewer = ({ file }) => {
       </div>
     );
   };
+  
 PDFViewer.propTypes = {
   file: PropTypes.string.isRequired,
 };

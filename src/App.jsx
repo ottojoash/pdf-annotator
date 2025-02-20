@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AdobePdfViewer from "./components/AdobePdfViewer";
+import PDFViewer from "./components/PdfViewer";
 
 function App() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -16,7 +16,7 @@ function App() {
     <div className="app">
       <h1>Adobe Acrobat PDF Annotator</h1>
       <input type="file" accept="application/pdf" onChange={handleFileChange} />
-      {pdfUrl && <AdobePdfViewer pdfUrl={pdfUrl} />}
+      {pdfUrl && <PDFViewer file={pdfUrl} />}
     </div>
   );
 }
